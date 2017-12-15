@@ -99,7 +99,14 @@ defmodule ExAws.ElastiCacheTest do
       })
 
     assert expected == ElastiCache.create_replication_group("myrepgroup", "My Rep Group",
-      [ node_group_configurations: [{"us-east-1a", ["us-east-1b", "us-east-1c"], 2, 0}],
+      [ node_group_configurations: [
+          %{
+            primary_availability_zone: "us-east-1a",
+            replica_availability_zones: ["us-east-1b", "us-east-1c"],
+            replica_count: 2,
+            slots: 0
+          }
+        ],
         tags: [ "Name": "myrepgroup" ],
         cache_node_type: "cache.t3.medium",
         engine: "redis"
