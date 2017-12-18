@@ -166,14 +166,15 @@ defmodule ExAws.ElastiCache do
 
         iex> ExAws.ElastiCache.create_replication_group("myRepGroup", "My Rep Group",
         ...> [node_group_configurations: [
-        ...>  %{primary_availability_zone: "us-east-1a",
+        ...>  [primary_availability_zone: "us-east-1a",
         ...>    replica_availability_zones: ["us-east-1b", "us-east-1c"],
         ...>    replica_count: 2,
-        ...>    slots: 0},
-        ...>  %{primary_availability_zone: "us-east-1b",
+        ...>    slots: 0],
+        ...>  [primary_availability_zone: "us-east-1b",
         ...>   replica_availability_zones: ["us-east-1a", "us-east-1c"],
         ...>   replica_count: 2,
-        ...>   slots: 2}]])
+        ...>   slots: 2]
+        ...> ]])
         %ExAws.Operation.Query{action: :create_replication_group,
         params: %{
           "Action" => "CreateReplicationGroup",
@@ -194,13 +195,12 @@ defmodule ExAws.ElastiCache do
         path: "/",
         service: :elasticache}
   """
-  @type node_group_configuration ::
-    %{
+  @type node_group_configuration :: [
       primary_availability_zone: binary,
       replica_availability_zones: [binary, ...],
       replica_count: integer,
       slots: binary
-    }
+  ]
   @type create_replication_group :: [
     at_rest_encryption_enabled: boolean,
     auth_token: binary,
@@ -564,12 +564,12 @@ defmodule ExAws.ElastiCache do
   defp format_param({:node_group_configurations, node_group_configurations}) do
     node_group_configurations
     |> Enum.map(fn node_group_configuration ->
-        %{
-          primary_availability_zone: node_group_configuration.primary_availability_zone,
-          replica_availability_zones: [availability_zone: node_group_configuration.replica_availability_zones],
-          replica_count: node_group_configuration.replica_count,
-          slots: node_group_configuration.slots
-          } end)
+        [
+          primary_availability_zone: node_group_configuration[:primary_availability_zone],
+          replica_availability_zones: [availability_zone: node_group_configuration[:replica_availability_zones]],
+          replica_count: node_group_configuration[:replica_count],
+          slots: node_group_configuration[:slots]
+        ] end)
     |> format(prefix: "NodeGroupConfigurations.NodeGroupConfiguration")
   end
 
